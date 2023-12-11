@@ -61,3 +61,23 @@ class HasFewerThan:
         player_value = getattr(player, self._attr)
 
         return player_value < self._value
+
+
+class QueryBuilder:
+    def __init__(self, *matchers):
+        self.matchers = matchers
+
+    def oneOf(self, *matchers):
+        return QueryBuilder(Or(*matchers))
+
+    def build(self):
+        return And(*self.matchers)
+    
+    def playsIn(self, team):
+        return QueryBuilder(*self.matchers, PlaysIn(team))
+    
+    def hasAtLeast(self, value, attr):
+        return QueryBuilder(*self.matchers, HasAtLeast(value, attr))
+    
+    def hasFewerThan(self, value, attr):
+        return QueryBuilder(*self.matchers, HasFewerThan(value, attr))
